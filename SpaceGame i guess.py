@@ -19,10 +19,6 @@ deathTimer = 5
 foeList = []
 foeSpeed = 3.5
 
-gem = Actor('gemgreen')
-gem.x = random.randint(20, 780)
-gem.y = 0
-
 life = 10
 score = 0
 game_over = False
@@ -53,14 +49,7 @@ def update():
         if keyboard.right:
             ship.x = ship.x + 5
 
-        gem.y = gem.y + 4 + score / 5
-        if gem.y > 600:
- #           life = life - 1
-            resetGem(gem)
-
-        if gem.colliderect(ship):
-            resetGem(gem)
-            score = score + 1
+        if random.randint(1, 40) == 1:
             spawnFoe()
 
         for foe in foeList:
@@ -98,6 +87,7 @@ def update():
                         foe.dead = 1
                         laser.image = "laserblue08"
                         foe.image = "spinner_hit"
+                        score += 1
 
         for laser in laserListFoe:
             if laser.dead > deathTimer:
@@ -123,7 +113,6 @@ def draw():
             laser.draw()
         for laser in laserListFoe:
             laser.draw()
-        gem.draw()
         ship.draw()
         for foe in foeList:
             foe.draw()
