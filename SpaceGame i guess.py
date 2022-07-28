@@ -4,7 +4,6 @@ import random
 WIDTH = 800
 HEIGHT = 600
 
-#corin wuz here
 
 ship = Actor('playership1_blue')
 ship.x = 370
@@ -108,7 +107,7 @@ def update():
 def draw():
     screen.fill((80,0,70))
     if game_over:
-        screen.draw.text('Game Over Dude', (360, 300), color=(255,255,255), fontsize=60)
+        screen.draw.text('Game Over', (360, 300), color=(255,255,255), fontsize=60)
         screen.draw.text('Score: ' + str(score), (360, 350), color=(255,255,255), fontsize=60)
     else:
         for laser in laserList:
