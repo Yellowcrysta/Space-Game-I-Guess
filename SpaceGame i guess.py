@@ -15,6 +15,9 @@ laserSpeed = 10
 laserListFoe = []
 laserSpeedFoe = -10
 
+assistList = []
+assistListSpeed = 5
+
 deathTimer = 5
 
 foeList = []
@@ -119,6 +122,15 @@ def draw():
             foe.draw()
         screen.draw.text('Score: ' + str(score), (15,10), color=(255,255,255), fontsize=30)
         screen.draw.text('Health: ' + str(life), (15,30), color=(255,255,255), fontsize=30)
+
+def spawnAssist():
+    assist = Actor('powerupblue_bolt')
+    assist.x = random.randint(20, 780)
+    assist.y = 35
+    assist.direction = random.randint(0, 1)
+    if assist.direction == 0:
+        assist.direction = -1
+    assistList.append(assist)
 
 def spawnFoe():
     foe = Actor('spinner')
