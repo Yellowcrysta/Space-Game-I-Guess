@@ -1,5 +1,6 @@
 import pgzrun
 import random
+import pygame
 
 WIDTH = 800
 HEIGHT = 600
@@ -8,6 +9,7 @@ HEIGHT = 600
 ship = Actor('playership1_blue')
 ship.x = 370
 ship.y = 550
+shipDefense = None
 
 laserList = []
 laserSpeed = 10
@@ -16,14 +18,15 @@ laserListFoe = []
 laserSpeedFoe = -10
 
 assistList = []
-assistListSpeed = 5
+assistListSpeed = -5
+assistTime = 300
 
 deathTimer = 5
 
 foeList = []
 foeSpeed = 3.5
 
-life = 10
+life = 999
 score = 0
 game_over = False
 started = False
@@ -52,7 +55,8 @@ def update():
             ship.x = ship.x - 5
         if keyboard.right:
             ship.x = ship.x + 5
-
+        if random.randint(1, 100) == 1:
+            spawnAssist()
         if random.randint(1, 40) == 1:
             spawnFoe()
 
@@ -63,7 +67,6 @@ def update():
                 foe.dead += 1
             else:
                 if random.randint(1, 100) == 1:
-                    print("Shot Fired")
                     laser = Actor("laserred01")
                     laser.angle += 90
                     laser.x = foe.x
@@ -75,6 +78,19 @@ def update():
                     foe.direction = 1
                 elif foe.x >= 780:
                     foe.direction = -1
+
+        for assist in assistList:
+            if assist.active == False:
+                assist.y -= assistListSpeed
+                if assist.colliderect(ship):
+                    assist.active = True
+                    assist.image = "ufoblue"
+            elif assist.time >= assistTime:
+                assistList.remove(assist)
+            else:
+                assist.time += 1
+                assist.x = ship.x
+                assist.y = ship.y
 
         for laser in laserList:
             if laser.dead > deathTimer:
@@ -120,6 +136,8 @@ def draw():
         ship.draw()
         for foe in foeList:
             foe.draw()
+        for assist in assistList:
+            assist.draw()
         screen.draw.text('Score: ' + str(score), (15,10), color=(255,255,255), fontsize=30)
         screen.draw.text('Health: ' + str(life), (15,30), color=(255,255,255), fontsize=30)
 
@@ -127,9 +145,8 @@ def spawnAssist():
     assist = Actor('powerupblue_bolt')
     assist.x = random.randint(20, 780)
     assist.y = 35
-    assist.direction = random.randint(0, 1)
-    if assist.direction == 0:
-        assist.direction = -1
+    assist.time = 0
+    assist.active = False
     assistList.append(assist)
 
 def spawnFoe():
