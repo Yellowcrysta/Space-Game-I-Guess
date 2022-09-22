@@ -1,6 +1,7 @@
 import pgzrun
 import random
 import pygame
+import math
 
 WIDTH = 800
 HEIGHT = 600
@@ -19,9 +20,11 @@ laserSpeedFoe = -10
 
 assistList = []
 assistListSpeed = -5
-assistTime = 300
+assistTime = 600
 
 deathTimer = 5
+
+orbitSpeed = 3
 
 foeList = []
 foeSpeed = 3.5
@@ -31,8 +34,6 @@ score = 0
 game_over = False
 started = False
 
-def on_mouse_move(pos):
-    ship.x = pos[0]
 
 def on_mouse_down():
     print("Mouse button clicked")
@@ -45,20 +46,38 @@ def on_mouse_down():
 
 def update():
 
-    global score, game_over, life, started
+
+
+
+    global score, game_over, life, started, testangle
+
     #if not started:
+
 
     if life <= 0:
         game_over = True
     if not game_over:
         if keyboard.left:
-            ship.x = ship.x - 5
+            ship.x = ship.x - 6
+            if ship.x < 50:
+                ship.x = 50
         if keyboard.right:
-            ship.x = ship.x + 5
+            ship.x = ship.x + 6
+            if ship.x > WIDTH - 50:
+                ship.x = WIDTH - 50
+        if keyboard.up:
+            ship.y = ship.y - 6
+            if ship.y < 150:
+                ship.y = 150
+        if keyboard.down:
+            ship.y = ship.y + 6
+            if ship.y > HEIGHT - 50:
+                ship.y = HEIGHT - 50
         if random.randint(1, 100) == 1:
             spawnAssist()
         if random.randint(1, 40) == 1:
             spawnFoe()
+
 
         for foe in foeList:
             if foe.dead > deathTimer:
@@ -84,13 +103,14 @@ def update():
                 assist.y -= assistListSpeed
                 if assist.colliderect(ship):
                     assist.active = True
+                    assist.angle = 0
                     assist.image = "ufoblue"
             elif assist.time >= assistTime:
                 assistList.remove(assist)
             else:
                 assist.time += 1
-                assist.x = ship.x
-                assist.y = ship.y
+                assist.angle += 3
+                placeSpriteAtAngle(ship, assist, assist.angle, 90)
 
         for laser in laserList:
             if laser.dead > deathTimer:
@@ -118,10 +138,16 @@ def update():
                 laser.y -= laserSpeedFoe
                 if laser.y >= 650:
                     laserListFoe.remove(laser)
+                for assist in assistList:
+                    if laser.colliderect(assist):
+                        laser.dead
+
                 if laser.colliderect(ship):
                     laser.dead = 1
                     life = life - 1
                     laser.image = "laserred08"
+
+    print('x:' + str(ship.x) + ', y:' + str(ship.y))
 
 def draw():
     screen.fill((80,0,70))
@@ -158,6 +184,20 @@ def spawnFoe():
     if foe.direction == 0:
         foe.direction = -1
     foeList.append(foe)
+
+
+## TODO, use math.radians() to convert from radians to degrees
+def placeSpriteAtAngle(sourceSprite, targetSprite, angle, distance):
+    sin = math.sin(math.radians(angle))
+    cos = math.cos(math.radians(angle))
+    a = distance * sin
+    b = distance * cos
+    newX = sourceSprite.x + b
+    newY = sourceSprite.y + a
+    targetSprite.x = newX
+    targetSprite.y = newY
+
+
 
 
 pgzrun.go() # Must be last line
