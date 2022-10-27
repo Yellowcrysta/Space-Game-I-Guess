@@ -105,6 +105,19 @@ def update():
                 elif foe.x >= 2530:
                     foe.direction = -1
 
+                if random.randint(1, 100) == 1:
+                    laser = Actor("laserred01")
+                    laser.angle += 90
+                    laser.x = foe.x
+                    laser.y = foe.y
+                    laser.dead = 0
+                    laserListFoe.append(laser)
+                foe.x = foe.x + (foe.direction * foeSpeed)
+                if foe.x <= 20:
+                    foe.direction = 1
+                elif foe.x >= 2530:
+                    foe.direction = -1
+
         for assist in assistList:
             if assist.active == False:
                 assist.y -= assistListSpeed
